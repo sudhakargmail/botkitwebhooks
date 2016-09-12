@@ -5,35 +5,17 @@ Created on May 18, 2016
 '''
 
 from flask import Flask
+application = Flask(__name__)
+
 from enums import MessagingProviders
 from amadeus import flights_low_fare_search, amadeus_results_to_facebook
 from expedia import get_ean_tags_from_webhook_input, expedia_search_request_to_facebook
 
-application = Flask(__name__)
-
-def get_structured_message(messaging_provider, text=None, image_url=None):
-    """ helper function that returns structured response for text and image url """
-    response = None
-    if text is not None or image_url is not None and messaging_provider in [MessagingProviders.facebook, MessagingProviders.line]:
-        response = []
-        if messaging_provider == MessagingProviders.facebook:
-            if text is not None:
-                response.append(dict(text=text))
-            if image_url is not None:
-                response.append(dict(attachment=dict(type="image", payload=dict(url=image_url))))
-        elif messaging_provider == MessagingProviders.line:
-            if text is not None:
-                response.append(dict(contentType=1, toType=1, text=text))
-            if image_url is not None:
-                response.append(dict(contentType=2, toType=1,
-                             originalContentUrl=image_url,
-                             previewImageUrl=image_url))
-    return response
 
 
 @application.route("/")
 def hello():
-    return "Hello! The Python is all set. You can run the webhooks now :)"
+    return "Hello! The Python is all set. You can run the webhooks now"
 
 
 @application.route("/flightsearch")
@@ -79,6 +61,29 @@ def amadeus_flight_search_webhook(body):
                                 travel_class=None,
                                 )
         return amadeus_results_to_facebook(amadeus_results, origin, destination)
+
+
+
+def get_structured_message(messaging_provider, text=None, image_url=None):
+    """ helper function that returns structured response for text and image url """
+    response = None
+    if text is not None or image_url is not None and messaging_provider in [MessagingProviders.facebook, MessagingProviders.line]:
+        response = []
+        if messaging_provider == MessagingProviders.facebook:
+            if text is not None:
+                response.append(dict(text=text))
+            if image_url is not None:
+                response.append(dict(attachment=dict(type="image", payload=dict(url=image_url))))
+        elif messaging_provider == MessagingProviders.line:
+            if text is not None:
+                response.append(dict(contentType=1, toType=1, text=text))
+            if image_url is not None:
+                response.append(dict(contentType=2, toType=1,
+                             originalContentUrl=image_url,
+                             previewImageUrl=image_url))
+    return response
+
+
 
 def expedia_hotel_search_webhook(body):
     """
