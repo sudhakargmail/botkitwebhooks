@@ -1,11 +1,8 @@
 
 
-from flask import Flask
 from enums import MessagingProviders
 from amadeus import flights_low_fare_search, amadeus_results_to_facebook
-from expedia import get_ean_tags_from_webhook_input, expedia_search_request_to_facebook
-
-
+from flask import Flask
 application = Flask(__name__)
 
 @application.route("/")

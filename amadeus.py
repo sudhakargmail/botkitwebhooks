@@ -1,4 +1,4 @@
-﻿# encoding=utf-8
+# encoding=utf-8
 '''
 Created on May 8, 2016
 
@@ -93,7 +93,7 @@ def get_flight_element(flight, title, idx, bg_color):
     flight_number = flight.get('flight_number', '')
     
     element = dict(title= "{}  {}{}".format(title, airline, flight_number),
-                   subtitle = " 🛫: {} {} →  🛬: {} {}".format(AIRPORTS.get(origin_airport, {}).get('name', ''), 
+                   subtitle = " ??: {} {} ?  ??: {} {}".format(AIRPORTS.get(origin_airport, {}).get('name', ''), 
                                                                departs_at,
                                                                AIRPORTS.get(destination_airport, {}).get('name', ''),
                                                                arrives_at),
@@ -101,7 +101,7 @@ def get_flight_element(flight, title, idx, bg_color):
                              "url":'https://www.google.com/search?q=flight%20{}%20{}'.format(airline, flight_number),
                              "title":"View Flight"}])
     
-    img_text = "{} → {}".format(origin_airport, destination_airport)
+    img_text = "{} ? {}".format(origin_airport, destination_airport)
     img_url = "https://placeholdit.imgix.net/~text?txtsize=66&txt={}&w=382&h=200&bg={}&txtclr=000000".format(img_text, bg_color)
     element['image_url'] = img_url
     return element
@@ -128,14 +128,14 @@ def amadeus_results_to_facebook(amadeus_json, eva_origin, eva_destination):
             destination = outbound_flights[-1].get('destination', {})
             origin_airport = origin.get('airport', '')
             destination_airport = destination.get('airport', '')
-            subtitle = "🛫: {}, 🛬: {}".format( departs_at, arrives_at)
+            subtitle = "??: {}, ??: {}".format( departs_at, arrives_at)
             if len(outbound_flights) > 2:
                 subtitle += ", {} stops".format(len(outbound_flights)-1)
             elif len(outbound_flights) > 1:
                 subtitle += ", one stop at {}".format(outbound_flights[0].get('destination',{}).get('airport', ''))
             else:
                 subtitle += ", non stop"
-            element = dict(title= "{} ⇒ {}  Option #{}:  ${}".format(origin_airport, destination_airport, idx+1, price),
+            element = dict(title= "{} ? {}  Option #{}:  ${}".format(origin_airport, destination_airport, idx+1, price),
                            subtitle = subtitle,
                             buttons=[{"type":"web_url",
                                      "url":'https://www.google.com/search?q=flight%20{}%20to%20{}'.format(origin_airport, destination_airport),
