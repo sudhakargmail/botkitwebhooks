@@ -158,11 +158,5 @@ def flight_arrival_time_webhook(body):
 
 
 
-
-
-
-
-
-
 if __name__ == "__main__":
     application.run()
