@@ -2,10 +2,12 @@
 '''
 Created on May 8, 2016
 
-@author: tal
+@author: Sudhakar
 
 The Amadeus Sandbox APIs at https://sandbox.amadeus.com
 '''
+
+
 from __future__ import unicode_literals, division, print_function
 from pprint import pprint
 import requests

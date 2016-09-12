@@ -1,8 +1,12 @@
 '''
 Created on May 18, 2016
 
-@author: marina
+@author: Sudhakar
 '''
+
+from flask import Flask
+application = Flask(__name__)
+
 from enums import MessagingProviders
 from amadeus import flights_low_fare_search, amadeus_results_to_facebook
 from expedia import get_ean_tags_from_webhook_input, expedia_search_request_to_facebook
@@ -26,6 +30,8 @@ def get_structured_message(messaging_provider, text=None, image_url=None):
                              previewImageUrl=image_url))
     return response
 
+
+@application.route("/flightsearch")
 def amadeus_flight_search_webhook(body):
     """
         body input: {origin, destination, departDateMin, departDateMax,
@@ -33,6 +39,7 @@ def amadeus_flight_search_webhook(body):
             attributes, sortBy, sortOrder}
         response format of the messagingProvider
     """
+
     if body.get('messagingProvider') == MessagingProviders.facebook:
         origin = body.get('origin', {})
         origin_airport = origin.get('allAirportsCode')
@@ -78,6 +85,8 @@ def expedia_hotel_search_webhook(body):
     if body.get('messagingProvider') == MessagingProviders.facebook:
         return expedia_search_request_to_facebook(ean_tags)
 
+
+
 def flight_boarding_pass_webhook(body):
     """
         body input: {messagingProvider}
@@ -86,6 +95,8 @@ def flight_boarding_pass_webhook(body):
     say_it = "Here is your boarding pass"
     image_url = "https://d2hbukybm05hyt.cloudfront.net/images/singapore-bp.jpg"
     return get_structured_message(body.get('messagingProvider'), say_it, image_url)
+
+
 
 def flight_itinerary_webhook(body):
     """
@@ -96,6 +107,8 @@ def flight_itinerary_webhook(body):
     image_url = "https://d2hbukybm05hyt.cloudfront.net/images/itinerary.jpg"
     return get_structured_message(body.get('messagingProvider'), say_it, image_url)
 
+
+
 def reservation_cancel_webhook(body):
     """
         body input: {messagingProvider}
@@ -103,6 +116,8 @@ def reservation_cancel_webhook(body):
     """
     say_it = "Please follow this link https://www.checkmytrip.com to cancel your reservation"
     return get_structured_message(body.get('messagingProvider'), text=say_it)
+
+
 
 def flight_gate_number_webhook(body):
     """
@@ -112,6 +127,8 @@ def flight_gate_number_webhook(body):
     say_it = "Your flight is boarding in 25 minutes at Gate D4"
     return get_structured_message(body.get('messagingProvider'), text=say_it)
 
+
+
 def flight_boarding_time_webhook(body):
     """
         body input: {messagingProvider}
@@ -119,6 +136,8 @@ def flight_boarding_time_webhook(body):
     """
     say_it = "Your flight starts boarding in 20 minutes"
     return get_structured_message(body.get('messagingProvider'), text=say_it)
+
+
 
 def flight_departure_time_webhook(body):
     """
@@ -128,6 +147,8 @@ def flight_departure_time_webhook(body):
     say_it = "Your flight departs at 7:35 am"
     return get_structured_message(body.get('messagingProvider'), text=say_it)
 
+
+
 def flight_arrival_time_webhook(body):
     """
         body input: {messagingProvider}
@@ -136,3 +157,6 @@ def flight_arrival_time_webhook(body):
     say_it = "Your flight arrives at 9:45 pm"
     return get_structured_message(body.get('messagingProvider'), text=say_it)
 
+
+if __name__ == "__main__":
+    application.run()
